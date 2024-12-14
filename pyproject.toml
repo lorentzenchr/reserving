@@ -1,0 +1,291 @@
+[build-system]
+requires = ["hatchling >= 1.26.3"]
+build-backend = "hatchling.build"
+
+[project]
+name = "reserving"
+authors = [
+  { name="Christian Lorentzen", email="lorentzen.ch@gmail.com" },
+]
+description = "Reserving methods for non-life insurance"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Framework :: Hatch",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+]
+keywords = ["machine learning", "actuarial reserving"]
+dependencies = [
+  "numpy>=2.1.3",
+  "packaging>=24.2",
+  "polars>=1.10.0",
+]
+dynamic = ["version"]
+
+[project.urls]
+"Homepage" = "https://github.com/lorentzenchr/reserving"  # "https://lorentzenchr.github.io/reserving/"
+"Source" = "https://github.com/lorentzenchr/reserving"
+"Tracker" = "https://github.com/lorentzenchr/reserving/issues"
+
+[tool]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+exclude = [".hatch"]
+
+[tool.ruff.lint]
+select = [
+  "F",  # pyflakes
+  "E",  # pycodestyle
+  "W",  # pycodestyle
+  # "C90",  # mccabe
+  "I",  # isort
+  # "N",  # pep8-naming
+  # "D",  # pydocstyle
+  "UP",  # pyupgrade
+  "YTT",  # flake8-2020
+  # "ANN",  # flake8-annotations
+  "ASYNC",  # flake8-async
+  "S",  # flake8-bandit
+  "BLE",  # flake8-blind-except
+  "FBT",  # flake8-boolean-trap
+  "B",  # flake8-bugbear
+  "A",  # flake8-builtins
+  # "COM",  # flake8-commas
+  # "CPY",  # flake8-copyright
+  "C4",  # flake8-comprehensions
+  "DTZ",  # flake8-datetimez
+  "T10",  # flake8-debugger
+  "DJ",  # flake8-django
+  "EM",  # flake8-errmsg
+  "EXE",  # flake8-executable
+  # "FA",  # flake8-future-annotations
+  "ISC",  # flake8-implicit-str-concat
+  "ICN",  # flake8-import-conventions
+  "LOG",  # flake8-logging
+  "G",  # flake8-logging-format
+  # "INP",  # flake8-no-pep420
+  "PIE",  # flake8-pie
+  "T20",  # flake8-print
+  "PYI",  # flake8-pyi
+  "PT",  # flake8-pytest-style
+  "Q",  # flake8-quotes
+  "RSE",  # flake8-raise
+  # "RET",  # flake8-return
+  "SLF",  # flake8-self
+  "SLOT",  # flake8-slots
+  "SIM",  # flake8-simplify
+  "TID",  # flake8-tidy-imports
+  "TCH",  # flake8-type-checking
+  "INT",  # flake8-gettext
+  # "ARG",  # flake8-unused-arguments
+  "PTH",  # flake8-use-pathlib
+  # "TD",  # flake8-todos
+  # "FIX",  # flake8-fixme
+  "ERA",  # eradicate
+  "PD",  # pandas-vet
+  # "PGH",  # pygrep-hooks
+  "PL",  # Pylint, subrules "PLC" Convention, "PLE" Error, "PLR" Refactor, "PLW" Warning
+  "TRY",  # tryceratops
+  "FLY",  # flynt
+  "NPY",  # NumPy-specific rules
+  "AIR",  # Airflow
+  "PERF",  # Perflint
+  # "FURB",  # refurb
+  "RUF",  # Ruff-specific rules
+]
+ignore = [
+  "C901",
+  "ISC001",  # recommended to exclude by ruff to avoid conflicts with formatter
+  "PD901",
+  "PLR0912",
+  "PLR0913",
+  "PLR0915",
+  "PLR2004",
+  "ERA001",
+]
+isort.known-first-party = ["reserving"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests can use assertions, and relative imports
+"*/tests/*.py" = ["S101", "TID252"]
+
+[tool.mypy]
+# disallow_untyped_defs = false
+# follow_imports = "normal"
+ignore_missing_imports = true
+plugins = "numpy.typing.mypy_plugin"
+pretty = true
+# show_column_numbers = true
+# warn_no_return = false
+# warn_unused_ignores = true
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = [
+  "src/reserving/__about__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.github",
+  "/.hatch",
+  "/.vscode",
+]
+
+[tool.hatch.envs.default]
+dependencies = [
+  "numpy>=2.1.3",
+  "polars>=1.10.0",
+  "pytest",
+  "pytest-cov",
+  "pytest-xdist",
+]
+
+[tool.hatch.envs.default.scripts]
+# Adding "-n auto" (pytest-xdist) allows parallel execution but swallows output.
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/reserving {args}"
+cov-erase = "coverage erase"
+no-cov = "cov --no-cov"
+
+[tool.hatch.envs.docs]
+dependencies = [
+  "mkdocs-material~=9.5.31",
+  "mkdocstrings[python]>=0.25.1",
+  "mkdocs-gen-files>=0.5.0",
+  "mkdocs-literate-nav>=0.6.1",
+  "mkdocs-section-index>=0.3.9",
+  "mkdocs-jupyter==0.24.7",  # https://github.com/danielfrg/mkdocs-jupyter/issues/212
+]
+
+[tool.hatch.envs.docs.scripts]
+build = "mkdocs build --clean --strict {args}"
+serve = "mkdocs serve --dev-addr localhost:8000 {args}"
+ci-build = "mkdocs gh-deploy --force {args}"
+
+[tool.hatch.envs.jupyter]
+extra-dependencies = [
+  "jupyterlab>=4.0.4",
+  "matplotlib>=3.10.0",
+  "plotly>=5.11.0",
+]
+
+[tool.hatch.envs.jupyter.scripts]
+lab = "jupyter lab"
+
+[tool.hatch.envs.format]
+detached = true
+dependencies = [
+  "numpy>=2.1.3",
+  "mypy>=1.4",
+  "ruff==0.8.3",
+]
+
+[tool.hatch.envs.format.scripts]
+# typing = "mypy --install-types --non-interactive {args:backend/src/hatchling src/hatch tests}"
+typing = [
+  "python -c 'from pathlib import Path; Path(\".mypy_cache\").mkdir(parents=True, exist_ok=True)'",
+  "mypy --install-types --non-interactive {args:src/reserving}"
+]
+format-check = [
+  "ruff format --check --diff {args:.}",
+]
+format-fix = [
+  "ruff format {args:.}",
+]
+lint-check = [
+  "ruff check {args:.}",
+]
+lint-fix = [
+  "ruff check --fix {args:.}",
+]
+check = [
+  "typing",
+  "format-check",
+  "lint-check",
+]
+fix = [
+  "typing",
+  "format-fix",
+  "lint-fix",
+]
+#"ruff check --select I --fix"
+
+[tool.hatch.envs.test]
+# We do not want to inherit from envs.default because we explicitely want to have test
+# matrix entries with minimal dependencies, e.g. without pandas or pyarrow.
+# Dependencies only contain what we need for testing.
+dependencies = [
+  "pytest",
+  "pytest-cov",
+  "pytest-xdist",
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.10", "3.11", "3.12"]
+
+[tool.hatch.envs.test.overrides]
+# Minimal versions but including pandas and pyarrow
+name."py3.9".set-extra-dependencies = [
+  "numpy==2.1.3",
+  "polars==1.10.0",
+  "pandas==1.5.*",
+  "pyarrow==11.0.*"
+]
+# Minimal versions without pandas and pyarrow 
+name."py3.10".set-extra-dependencies = [
+  "numpy==1.22",
+  "polars==1.10.0",
+]
+# Some intermediate versions, with pandads but without pyarrow
+name."py3.11".set-extra-dependencies = [
+  "numpy==2.1.*",
+  "polars==1.10.*",
+  "pandas==2.0.*",
+  "plotly",
+]
+# Latest versions, with plotly
+name."py3.12".set-extra-dependencies = [
+  "numpy>=2.1.3",
+  "polars>=1.10.0",
+  "pandas",
+]
+# To check correct versions, you can run
+# hatch -e test run pip freeze | grep polars
+[tool.hatch.envs.test.scripts]
+# versions = ["pip freeze | grep -E 'numpy|polars|scipy|pandas|pyarrow'"]
+# A version of 'versions' working on all plattforms, in particular Windows.
+versions = "python dev_tools/print_package_versions.py"
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/reserving --cov-append {args}"
+
+[tool.hatch.version]
+path = "src/reserving/__about__.py"
+
+[tool.pytest.ini_options]
+addopts = [
+  "--doctest-modules",
+  "--ignore=docs",
+]
+doctest_optionflags = [
+  "NORMALIZE_WHITESPACE",
+  "IGNORE_EXCEPTION_DETAIL",
+  "ELLIPSIS",
+]
+filterwarnings = [
+  # fail on any warnings that are not explicitly matched below
+  "error",
+]
